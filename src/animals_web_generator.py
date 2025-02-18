@@ -46,7 +46,7 @@ def generate_strong_info(name, value):
     ])
 
 
-def generate_html(template, animal_data):
+def generate_html(animal_data):
     html_nodes = []
 
     for animal in animal_data:
@@ -66,15 +66,19 @@ def generate_html(template, animal_data):
         html_nodes.append(
             generate_html_node("li", children=[name_node, paragraph], css_class="cards__item"))
 
-    output = "\n".join(html_nodes)
-    return template.replace(PLACEHOLDER, output)
+    return "\n".join(html_nodes)
+
+
+def merge_html_template(template, content):
+    return template.replace(PLACEHOLDER, content)
 
 
 def main():
     data = load_animal_data()
     template = load_template_html()
-    content = generate_html(template, data)
-    write_output_html(content)
+    html_content = generate_html(data)
+    merged_template = merge_html_template(template, html_content)
+    write_output_html(merged_template)
 
 
 if __name__ == '__main__':
