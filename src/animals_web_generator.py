@@ -21,46 +21,52 @@ def write_output_html(content, ):
         file.write(content)
 
 
+def generate_html_node(node, *, children=None, css_class=None, self_closing=False):
+    opening_tag = f"<{node}>"
+    closing_tag = [f"</{node}>"]
+
+    if css_class:
+        opening_tag = f"{opening_tag[:-1]} class='{css_class}'>"
+
+    if self_closing:
+        opening_tag = f"{opening_tag[:-1]} />"
+        closing_tag = []
+
+    if not children or self_closing:
+        return "".join([opening_tag, *closing_tag])
+
+    return "".join([opening_tag, *children, *closing_tag])
+
+
+def generate_strong_info(name, value):
+    return "".join([
+        generate_html_node("strong", children=f"{name}: "),
+        value,
+        generate_html_node("br", self_closing=True)
+    ])
+
+
 def generate_html(template, animal_data):
-    html_lines = []
+    html_nodes = []
 
     for animal in animal_data:
         name = animal["name"]
         diet = animal["characteristics"]["diet"]
-        locations = animal["locations"]
-        location = " and ".join(locations)
-
+        location = " and ".join(animal["locations"])
         type_ = animal["characteristics"].get("type")
 
-        html_lines.append("<li class='cards__item'>")
-        html_lines.append("<div class='card__title'>")
-        html_lines.append(name)
-        html_lines.append("</div>")
-        html_lines.append("<p class='card__text'>")
+        name_node = generate_html_node("div", children=name, css_class="card__title")
+        diet_node = generate_strong_info("Diet", diet)
+        location_node = generate_strong_info("Location", location)
+        type_node = [generate_strong_info("Type", type_)] if type_ else []
 
-        html_lines.append("<strong>")
-        html_lines.append("Diet:")
-        html_lines.append("</strong>")
-        html_lines.append(diet)
-        html_lines.append("<br />")
+        paragraph = generate_html_node("p", children=[diet_node, location_node, *type_node],
+                                       css_class="card__text")
 
-        html_lines.append("<strong>")
-        html_lines.append("Location:")
-        html_lines.append("</strong>")
-        html_lines.append(location)
-        html_lines.append("<br />")
+        html_nodes.append(
+            generate_html_node("li", children=[name_node, paragraph], css_class="cards__item"))
 
-        if type_:
-            html_lines.append("<strong>")
-            html_lines.append("Type:")
-            html_lines.append("</strong>")
-            html_lines.append(type_)
-            html_lines.append("<br />")
-
-        html_lines.append("</p>")
-        html_lines.append("</li>")
-
-    output = "\n".join(html_lines)
+    output = "\n".join(html_nodes)
     return template.replace(PLACEHOLDER, output)
 
 
