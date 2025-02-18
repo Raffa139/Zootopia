@@ -22,14 +22,45 @@ def write_output_html(content, ):
 
 
 def generate_html(template, animal_data):
-    fox_names = []
+    html_lines = []
 
-    for fox in animal_data:
-        fox_names.append("<li>")
-        fox_names.append(fox["name"])
-        fox_names.append("</li>")
+    for animal in animal_data:
+        name = animal["name"]
+        diet = animal["characteristics"]["diet"]
+        locations = animal["locations"]
+        location = " and ".join(locations)
 
-    output = "\n".join(fox_names)
+        type_ = animal["characteristics"].get("type")
+
+        html_lines.append("<li class='cards__item'>")
+        html_lines.append("<div class='card__title'>")
+        html_lines.append(name)
+        html_lines.append("</div>")
+        html_lines.append("<p class='card__text'>")
+
+        html_lines.append("<strong>")
+        html_lines.append("Diet:")
+        html_lines.append("</strong>")
+        html_lines.append(diet)
+        html_lines.append("<br />")
+
+        html_lines.append("<strong>")
+        html_lines.append("Location:")
+        html_lines.append("</strong>")
+        html_lines.append(location)
+        html_lines.append("<br />")
+
+        if type_:
+            html_lines.append("<strong>")
+            html_lines.append("Type:")
+            html_lines.append("</strong>")
+            html_lines.append(type_)
+            html_lines.append("<br />")
+
+        html_lines.append("</p>")
+        html_lines.append("</li>")
+
+    output = "\n".join(html_lines)
     return template.replace(PLACEHOLDER, output)
 
 
