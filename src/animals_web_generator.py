@@ -38,12 +38,20 @@ def generate_html_node(node, *, children=None, css_class=None, self_closing=Fals
     return "".join([opening_tag, *children, *closing_tag])
 
 
-def generate_strong_info(name, value):
+def generate_html_strong_info(name, value):
     return "".join([
         generate_html_node("strong", children=f"{name}: "),
-        value,
-        generate_html_node("br", self_closing=True)
+        value
     ])
+
+
+def generate_html_list_item(children):
+    return generate_html_node("li", children=children)
+
+
+def generate_html_list(list_node, list_items):
+    item_nodes = [generate_html_list_item(item) for item in list_items]
+    return generate_html_node(list_node, children=item_nodes)
 
 
 def generate_html(animal_data):
@@ -56,15 +64,15 @@ def generate_html(animal_data):
         type_ = animal["characteristics"].get("type")
 
         name_node = generate_html_node("div", children=name, css_class="card__title")
-        diet_node = generate_strong_info("Diet", diet)
-        location_node = generate_strong_info("Location", location)
-        type_node = [generate_strong_info("Type", type_)] if type_ else []
+        diet_node = generate_html_strong_info("Diet", diet)
+        location_node = generate_html_strong_info("Location", location)
+        type_node = [generate_html_strong_info("Type", type_)] if type_ else []
 
-        paragraph = generate_html_node("p", children=[diet_node, location_node, *type_node],
-                                       css_class="card__text")
+        info_list = generate_html_list("ul", [diet_node, location_node, *type_node])
+        info_container = generate_html_node("div", children=info_list, css_class="card__text")
 
         html_nodes.append(
-            generate_html_node("li", children=[name_node, paragraph], css_class="cards__item"))
+            generate_html_node("li", children=[name_node, info_container], css_class="cards__item"))
 
     return "\n".join(html_nodes)
 
