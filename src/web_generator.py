@@ -15,13 +15,6 @@ def new_node(node, *, children=None, css_class=None, self_closing=False):
     return "".join([opening_tag, *children, *closing_tag])
 
 
-def generate_html_strong_info(name, value):
-    return "".join([
-        new_node("strong", children=f"{name}: "),
-        value
-    ])
-
-
 def new_list_item(children):
     return new_node("li", children=children)
 

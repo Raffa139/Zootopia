@@ -24,9 +24,11 @@ def generate_html_strong_info(name, value):
     ])
 
 
-def generate_html(animal_data):
-    html_nodes = []
+def generate_html(animal_name, animal_data):
+    if not animal_data:
+        return html.new_node("h2", children=f"The animal '{animal_name}' doesn't exist.")
 
+    animal_list_items = []
     for animal in animal_data:
         name = animal["name"]
         diet = animal["characteristics"]["diet"]
@@ -41,10 +43,13 @@ def generate_html(animal_data):
         info_list = html.new_list("ul", [diet_node, location_node, *type_node])
         info_container = html.new_node("div", children=info_list, css_class="card__text")
 
-        html_nodes.append(
+        animal_list_items.append(
             html.new_node("li", children=[name_node, info_container], css_class="cards__item"))
 
-    return "\n".join(html_nodes)
+    return "\n".join([
+        html.new_node("h2", children=f"Found {len(animal_data)} animal(s) for '{animal_name}'."),
+        html.new_node("ul", children=animal_list_items, css_class="cards")
+    ])
 
 
 def merge_html_template(template, content):
