@@ -1,5 +1,4 @@
 import web_generator as html
-from data_fetcher import get_animal_data
 
 TEMPLATE_FILE = "animals_template.html"
 OUTPUT_FILE = "animals.html"
@@ -11,9 +10,11 @@ def load_template_html():
         return file.read()
 
 
-def write_output_html(content, ):
+def write_output_html(content):
     with open(OUTPUT_FILE, "w") as file:
         file.write(content)
+
+    print(f"Website was successfully generated to the file {OUTPUT_FILE}.")
 
 
 def generate_html_strong_info(name, value):
@@ -48,15 +49,3 @@ def generate_html(animal_data):
 
 def merge_html_template(template, content):
     return template.replace(PLACEHOLDER, content)
-
-
-def main():
-    data = get_animal_data("Fox")
-    template = load_template_html()
-    html_content = generate_html(data)
-    merged_template = merge_html_template(template, html_content)
-    write_output_html(merged_template)
-
-
-if __name__ == '__main__':
-    main()
