@@ -1,4 +1,5 @@
 import json
+import web_generator as html
 
 DATA_FILE = "animals_data.json"
 TEMPLATE_FILE = "animals_template.html"
@@ -21,37 +22,11 @@ def write_output_html(content, ):
         file.write(content)
 
 
-def generate_html_node(node, *, children=None, css_class=None, self_closing=False):
-    opening_tag = f"<{node}>"
-    closing_tag = [f"</{node}>"]
-
-    if css_class:
-        opening_tag = f"{opening_tag[:-1]} class='{css_class}'>"
-
-    if self_closing:
-        opening_tag = f"{opening_tag[:-1]} />"
-        closing_tag = []
-
-    if not children or self_closing:
-        return "".join([opening_tag, *closing_tag])
-
-    return "".join([opening_tag, *children, *closing_tag])
-
-
 def generate_html_strong_info(name, value):
     return "".join([
-        generate_html_node("strong", children=f"{name}: "),
+        html.new_node("strong", children=f"{name}: "),
         value
     ])
-
-
-def generate_html_list_item(children):
-    return generate_html_node("li", children=children)
-
-
-def generate_html_list(list_node, list_items):
-    item_nodes = [generate_html_list_item(item) for item in list_items]
-    return generate_html_node(list_node, children=item_nodes)
 
 
 def generate_html(animal_data):
@@ -63,16 +38,16 @@ def generate_html(animal_data):
         location = " and ".join(animal["locations"])
         type_ = animal["characteristics"].get("type")
 
-        name_node = generate_html_node("div", children=name, css_class="card__title")
+        name_node = html.new_node("div", children=name, css_class="card__title")
         diet_node = generate_html_strong_info("Diet", diet)
         location_node = generate_html_strong_info("Location", location)
         type_node = [generate_html_strong_info("Type", type_)] if type_ else []
 
-        info_list = generate_html_list("ul", [diet_node, location_node, *type_node])
-        info_container = generate_html_node("div", children=info_list, css_class="card__text")
+        info_list = html.new_list("ul", [diet_node, location_node, *type_node])
+        info_container = html.new_node("div", children=info_list, css_class="card__text")
 
         html_nodes.append(
-            generate_html_node("li", children=[name_node, info_container], css_class="cards__item"))
+            html.new_node("li", children=[name_node, info_container], css_class="cards__item"))
 
     return "\n".join(html_nodes)
 
