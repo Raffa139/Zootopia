@@ -1,15 +1,9 @@
-import json
 import web_generator as html
+from data_fetcher import get_animal_data
 
-DATA_FILE = "animals_data.json"
 TEMPLATE_FILE = "animals_template.html"
 OUTPUT_FILE = "animals.html"
 PLACEHOLDER = "__REPLACE_ANIMALS_INFO__"
-
-
-def load_animal_data():
-    with open(DATA_FILE, "r") as file:
-        return json.load(file)
 
 
 def load_template_html():
@@ -57,7 +51,7 @@ def merge_html_template(template, content):
 
 
 def main():
-    data = load_animal_data()
+    data = get_animal_data("Fox")
     template = load_template_html()
     html_content = generate_html(data)
     merged_template = merge_html_template(template, html_content)
